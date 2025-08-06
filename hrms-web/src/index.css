@@ -1,0 +1,172 @@
+@import "tailwindcss";
+.role-management-container {
+  padding: 24px;
+}
+
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .permissions-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .role-management-container {
+    padding: 12px;
+  }
+}
+
+.ant-table-cell {
+  white-space: nowrap;
+}
+
+
+
+
+
+
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.glass-card-inner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.glass-input:hover {
+  border-color: rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.interview-sessions-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.session-card {
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.session-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.cancelled-session {
+  background-color: #fff1f0;
+  border-color: #ffa39e;
+}
+
+.past-session {
+  opacity: 0.9;
+  background-color: #fafafa;
+}
+
+.session-group {
+  margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+  .interview-sessions-container {
+    padding: 8px;
+  }
+}
+
+
+
+
+
+
+.onboarding-container {
+  background-color: #f5f7fa;
+}
+
+.stat-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.details-modal .ant-modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.details-modal .ant-descriptions-item-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.delete-modal .ant-modal-body {
+  padding: 24px;
+}
+
+.ant-table-row {
+  transition: all 0.3s ease;
+}
+
+.ant-table-row:hover {
+  background-color: #fafafa;
+}
+
+.ant-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ant-btn-text:not([disabled]):hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+
+
+
+
+
+
+
+
+.ant-card {
+  background-color: #fff;
+  border-radius: 16px;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 600;
+}
+
+.ant-btn-primary {
+  background-color: #52c41a;
+  border-color: #52c41a;
+}

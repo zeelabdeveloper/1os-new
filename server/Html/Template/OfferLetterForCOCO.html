@@ -1,0 +1,345 @@
+
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Appointment Letter</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.5;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .page {
+                    margin-bottom: 30px;
+                 
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .header h1 {
+                    font-size: 24px;
+                    margin: 0;
+                }
+                .ref {
+                    text-align: right;
+                    margin-bottom: 20px;
+                }
+                .to-address {
+                    margin-bottom: 20px;
+                }
+                .confidential {
+                    font-weight: bold;
+                    text-align: center;
+                    margin: 20px 0;
+                }
+                .content {
+                    margin-bottom: 20px;
+                }
+                .content p {
+                    margin: 10px 0;
+                }
+                .content b {
+                    font-weight: bold;
+                }
+                .terms-list {
+                    margin-left: 20px;
+                }
+                .terms-list li {
+                    margin-bottom: 10px;
+                }
+                .signature {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 50px;
+                }
+                .signature-block {
+                    width: 45%;
+                }
+                .annexure-header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .annexure-header h1 {
+                    font-size: 24px;
+                    margin: 0;
+                }
+                .annexure-header h2 {
+                    font-size: 20px;
+                    margin: 10px 0;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                table, th, td {
+                    border: 1px solid black;
+                }
+                th, td {
+                    padding: 8px;
+                    text-align: left;
+                }
+                .note {
+                    margin-top: 20px;
+                    font-style: italic;
+                }
+                .footer {
+                    margin-top: 50px;
+                }
+            </style>
+        </head>
+        <body>
+            <!-- Page 1 -->
+            <div class="page">
+
+ <div style="display: flex; justify-content: right; ">
+                    <img src=${logo}  style=" width: 100px; "  alt="">
+                </div>
+
+
+                <div class="header">
+                    <h1>Appointment Letter</h1>
+                </div>
+                
+                <div class="ref">
+                    Ref:ZLP/ HR–30<sup>st</sup> July 2025.
+                </div>
+                
+                <div class="to-address">
+                    To,<br>
+                    Mr.${user?.name}<br>
+                    Location: ${user?.currentLocation || 'NA'}<br>
+                </div>
+                
+                <div class="confidential">
+                    <b>Private and Confidential</b>
+                </div>
+                
+                <div class="content">
+                    <p>Dear Mr. ${user.name},</p>
+                    
+                    <p>With reference to your application and subsequent interview held before the selection 
+                    committee, we are pleased to confirm your appointment as "${req?.body?.candidatePosition}" at Zeelab Pvt 
+                    Ltd.<br>
+                    You will be based on ${req?.body?.store || 'New Delhi Zee Lab Pharmacy Store'}. Subjected to Store Opening / 
+                    Joining: ${  new Date(req?.body?.joiningDate)?.toLocaleDateString('en-IN') ||   new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}.</p>
+                    
+                    <p><b>Note: There is 9 hrs. Shift as per company policy. Also you have to indulge in Store 
+                    Sales Promotional Activity.</b></p>
+                    
+                    <p>The terms and conditions incidental to the appointment are as mentioned below:</p>
+                    
+                    <ol class="terms-list">
+                        <li>Your compensation package is attached herewith as an "${req?.body?.compensationPackage}"</li>
+                        <li>Your salary is confidential and should be known to you only.</li>
+                        <li>The management will be free to withhold and or refuse to pay you salary and allowance till 
+                        it is satisfied that you have actually worked as per the instructions or requirements of the 
+                        management.</li>
+                        <li>You will be on probation period until a written confirmation. There will be no presumption 
+                        of automatic confirmation in the absence of any written letter of confirmation from the 
+                        company. You will get confirmation letter on the basis of your performance.</li>
+                        <li>You would be entitled for leave as per the company policy may be in force at any relevant 
+                        time.</li>
+                        <li>Apart from your usual duties, your activities can also be extended over any other kind of 
+                        duties, as deemed appropriate by the company at its discretion.</li>
+                        <li>Your services are liable to be transferred to any other establishment within India as and 
+                        when desired by the management. Your refusal for such transfer will be considered as your 
+                        unwillingness to serve the company and in such a case, the management will be free to 
+                        terminate your appointment for committing breach of agreed terms and conditions of 
+                        employment.</li>
+                        <li>During the period of this appointment, you shall not engage yourself in any other Job/ 
+                        Business</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Page 2 -->
+            <div class="page">
+
+               
+                <div class="content">
+                    <ol class="terms-list" start="9">
+                        <li>With or without any remuneration. You are required to maintain the highest order of 
+                        discipline as regard the work of the company. In case of breach of discipline/ Trust, the 
+                        company has right to reserve terminate your services with immediate effect.</li>
+                        <li>Your appointment will be subject to the verification of your past service record and 
+                        antecedents.</li>
+                        <li>In case any information furnished by you in connection with the above appointment or 
+                        during the currency of your employment in the company is found to be incorrect at any 
+                        stage or correct information is found suppressed, you are liable to be removed from the 
+                        services at any time without any notice.</li>
+                        <li>You are required to maintain company's secrecy in regard to strategies, offers, incentives 
+                        schemes, etc. and shall ensure that company's interests are safeguarded at all the times</li>
+                        <li>You will be devoting entire duty hours to the company and will not utilize any time 
+                        resources for any other activities.</li>
+                        <li>You will take good care of and be responsible for the promotional items and other 
+                        properties of the Company provided to you from time to time, and compensate to the 
+                        Company in case of any loss of the same. If your services are terminated due to 
+                        misconduct resulting in financial loss to the Company, the loss will be recovered from any 
+                        amount due to you or otherwise.</li>
+                        <li>If you remain absent without prior permission or overstay the sanctioned leave for more 
+                        than five consecutive days, you will be deemed to have deserted your employment thereby 
+                        bring about termination of your services with the Company automatically on your own.</li>
+                        <li>Upon leaving employment you are required to return Company's property in your 
+                        possession immediately without fail. Further you are required to obtain and submit NOC 
+                        from the Distributors/others as required to settle your account in full and final settlement. If 
+                        the claim of payable due is not received in maximum one month from the date of leaving, it 
+                        would not be entertained. In case you fail to comply with the exit formalities, the cost of 
+                        property as determined by the Company will be recovered from your dues payable to you 
+                        in full and final settlement.</li>
+                        <li><b>Please note that 10% of security amount will be deducted from your base salary for 
+                        Next 10 months only from date of joining and it will be payable in your F&F 
+                        settlement, when you will leave the organization in a proper manner. The same will 
+                        not be payable in case of leaving the organization before completion of 10 months 
+                        and not serving the notice period as per terms of appointment letter.</b></li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Page 3 -->
+            <div class="page">
+
+
+
+                <div class="content">
+                    <p><b>Discharge or Termination of Employment or Dismissal: -</b></p>
+                    
+                    <ol>
+                        <li>The services of an employee can be terminated during the probation period at any time 
+                        without assigning any reason. After confirmation of the service, the company has reserve 
+                        the right to terminate this appointment at any time without assigning any reason either on 
+                        <b>giving 30 days' notice or without any notice on payment of 30 days' basic salary in 
+                        lieu of notice.</b></li>
+                        <li>However, during the probation period and thereafter also, the employee will have to give 
+                        30 days' notice or salary in lieu thereof, before leaving services of the company. The 
+                        company has reserved the right to accept such resignation with immediate effect or at any 
+                        time during the notice period and the employee shall not be entitled to any salary or other 
+                        benefit after the effective date from which resignation such accepted. In that event, 
+                        employee shall also surrender all other benefit and Company's property immediately and 
+                        NOC's. The company has reserved the right to relieve the employee services subject to 
+                        completion of all clearance formalities.</li>
+                        <li>The services of an employee can be terminated immediately during probation period and 
+                        thereafter also in case of fake reporting, Misconduct and insubordination behavior, in this 
+                        connection employee will not be eligible for any full and final and will have no legal binding 
+                        on employer.</li>
+                        <li>If you absent yourself without leave more than 5 days, you shall be considered as voluntarily 
+                        left the services without giving notice period. In this connection you will not be entitled for 
+                        any F&F.</li>
+                        <li>If any dispute arise then jurisdiction matter will be resolve in Delhi court only.</li>
+                    </ol>
+                    
+                    <p>Please sign and return to the undersigned the duplicate copy of this letter signifying your 
+                    acceptance.</p>
+                    
+                    <p>We take this opportunity to whole heartily welcome you to Zeelab and hope that your 
+                    association with the Company will prove to be mutually beneficial and rewarding.</p>
+                </div>
+                
+                <div class="signature">
+                    <div class="signature-block">
+                        <p><b>Zeelab Pharmacy Pvt Ltd</b></p>
+                        <p><b>Authorized Signatory</b></p>
+                    </div>
+                    <div class="signature-block">
+                        <p><b>I accept the above terms and Conditions.</b></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page 4 -->
+            <div class="page">
+
+           
+
+
+                <div class="annexure-header">
+                    <h1>ZEELAB</h1>
+                    <h2>PHARMACY</h2>
+                    <h2>"ANNEXURE- A"</h2>
+                </div>
+                
+                <table>
+                    <tr>
+                        <td>Name</td>
+                        <td>Designation</td>
+                        <td>HQ</td>
+                    </tr>
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${req?.body?.candidatePosition}</td>
+                        <td>${req?.body?.store || 'N/A'}</td>
+                    </tr>
+                    <tr >
+                        <td>Remuneration</td>
+                        <td>INR PM</td>
+                        <td>INR- P.A</td>
+                    </tr>
+                    <tr>
+                        <td>Basic</td>
+                        <td>${req?.body?.basicMonthly || '17000'}</td>
+                        <td>${req?.body?.basicAnnual || 17000}</td>
+                    </tr>
+                    <tr>
+                        <td>HRA</td>
+                        <td>${req?.body?.hraMonthly || '3000'}</td>
+                        <td>${(req?.body?.hraAnnual || 3000) * 12}</td>
+                    </tr>
+                    <tr>
+                        <td>Medical</td>
+                           <td>${req?.body?.medicalMonthly || '0'}</td>
+                        <td>${req?.body?.medicalAnnual }</td>
+                    </tr>
+                    <tr>
+                        <td>Transport</td>
+                          <td>${req?.body?.transportMonthly || '0'}</td>
+                        <td>${req?.body?.transportAnnual ||0 }</td>
+                    </tr>
+                    <tr>
+                        <td>Other Allowance</td>
+                                <td>${req?.body?.otherAllowanceMonthly || '0'}</td>
+                        <td>${req?.body?.otherAllowanceAnnual ||0 }</td>
+                    </tr>
+                    <tr>
+                        <td>Base Salary</td>
+                            <td>${req?.body?.baseSalaryMonthly || '0'}</td>
+                        <td>${req?.body?.baseSalaryAnnual ||0 }</td>
+                    </tr>
+                   
+                    
+                    <tr>
+                        <td>Total CTC</td>
+                        <td>${( parseInt(req?.body?.baseSalaryMonthly)  || 17000) + (parseInt(req?.body?.hraMonthly)    || 3000) + 1070}</td>
+                        <td>${((  parseInt( req?.body?.hraAnnual)  || 17000) + ( parseInt( req?.body?.hraMonthly)  || 3000) + 1070) * 12}</td>
+                    </tr>
+                    
+                     
+                     
+                   
+                </table>
+                
+                <div class="note">
+                    <p>Note: The drug license Amount is included in your Salary</p>
+                </div>
+                
+                <div class="footer">
+                    <p>Please note - TDS will be deducted as per rules.<br>
+                    I confirm that this contract is in accordance with our mutual understanding and unconditionally and irrevocably accept the above terms and conditions.</p>
+                    
+                    <div class="signature">
+                        <div class="signature-block">
+                            <p><b>Zeelab Pharmacy Pvt. Ltd</b></p>
+                            <p><b>HR Dept.</b></p>
+                        </div>
+                        <div class="signature-block">
+                            <p><b>I accept the above terms and Conditions</b></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+       
