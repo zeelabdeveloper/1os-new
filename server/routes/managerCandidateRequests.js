@@ -10,7 +10,7 @@ const { EmailConfig } = require("../helper/emailConfig");
 const mongoose = require("mongoose");
 const { createNotification, sendPushNotification } = require("../helper/l1");
 const Subscription = require("../models/Subscription");
-const { getFeedbackMailFromReviwer, getFeedbackMailFromManagerForManpower } = require("../services/RejectionMail");
+const {  getFeedbackMailFromManagerForManpower } = require("../services/RejectionMail");
 
 
 
@@ -428,7 +428,7 @@ console.log(req.body)
 
 
 
-      await getFeedbackMailFromManagerForManpower(request.createdBy, oldApplicaiton.managerIdForReview, oldApplicaiton);
+      // await getFeedbackMailFromManagerForManpower(request.createdBy, oldApplicaiton.managerIdForReview, oldApplicaiton);
 
  
 
@@ -436,27 +436,27 @@ console.log(req.body)
 
 
 // Create notification for the creator about the manager's feedback
-await createNotification({
-  receiver: oldApplicaiton?.createdBy?._id,  // Who receives the notification (original creator)
-  sender: oldApplicaiton?.managerIdForReview?._id,  // Who sent the feedback (manager)
-  title: `Feedback Received on Application`,
-  message: `${oldApplicaiton?.managerIdForReview?.firstName} has provided ${application.managerReview.status} feedback on application (ID: ${id})`,
-  type: "system",
-  link: `recruitment/application?id=${application._id}`,
-});
+// await createNotification({
+//   receiver: oldApplicaiton?.createdBy?._id,  // Who receives the notification (original creator)
+//   sender: oldApplicaiton?.managerIdForReview?._id,  // Who sent the feedback (manager)
+//   title: `Feedback Received on Application`,
+//   message: `${oldApplicaiton?.managerIdForReview?.firstName} has provided ${application.managerReview.status} feedback on application (ID: ${id})`,
+//   type: "system",
+//   link: `recruitment/application?id=${application._id}`,
+// });
 
 // Find subscription for the creator to send push notification
-const subscribe = await Subscription.findOne({ userId: oldApplicaiton?.createdBy?._id });
-if (subscribe) {
-  await sendPushNotification(
-    JSON.stringify({
-      title: "Feedback Received!",
-      body: `${oldApplicaiton?.managerIdForReview?.firstName} has reviewed the application you assigned`,
-      url: `recruitment/application?id=${application._id}`
-    }),
-    subscribe
-  );
-}
+// const subscribe = await Subscription.findOne({ userId: oldApplicaiton?.createdBy?._id });
+// if (subscribe) {
+//   await sendPushNotification(
+//     JSON.stringify({
+//       title: "Feedback Received!",
+//       body: `${oldApplicaiton?.managerIdForReview?.firstName} has reviewed the application you assigned`,
+//       url: `recruitment/application?id=${application._id}`
+//     }),
+//     subscribe
+//   );
+// }
 
 
 
