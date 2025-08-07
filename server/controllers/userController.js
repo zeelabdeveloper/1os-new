@@ -231,7 +231,7 @@ module.exports = {
             
             <p>For security reasons, we recommend changing your password after your first login.</p>
             
-            <a href="http://139.59.72.240/login" class="button">Login to Your Account</a>
+            <a href="http://139.59.85.95/login" class="button">Login to Your Account</a>
         </div>
         <div class="footer">
             <p>If you didn't request this account or need any assistance, please contact our support team.</p>

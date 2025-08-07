@@ -22,7 +22,7 @@ router.get('/:jobId', async (req, res) => {
       return res.status(404).json({ error: 'Job not found' });
     }
 
-    const applicationLink = `http://139.59.72.240/apply/${req.params.jobId}`;
+    const applicationLink = `http://139.59.85.95/apply/${req.params.jobId}`;
     
     // Generate QR code
     const qrCode = await QRCode.toDataURL(applicationLink);

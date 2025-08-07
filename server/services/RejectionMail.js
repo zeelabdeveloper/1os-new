@@ -71,7 +71,7 @@ const onboardingMail = async (application) => {
     }
 
     // Generate a unique tracking link (replace with your actual tracking URL generation logic)
-    const trackingLink = `http://139.59.72.240/career/application?id=${application?._id}`;
+    const trackingLink = `http://139.59.85.95/career/application?id=${application?._id}`;
 
     const mailOptions = {
       from: `${EmailConfig.mailFromName} <${EmailConfig.mailFromAddress}>`,
@@ -162,7 +162,7 @@ async function sendConfirmationEmail(user, tempPassword) {
     }
 
     // Generate a password reset link (implement your actual reset link generation)
-    const resetLink = `http://139.59.72.240/forget-pass`;
+    const resetLink = `http://139.59.85.95/forget-pass`;
 
     const mailOptions = {
       from: `${EmailConfig.mailFromName} <${EmailConfig.mailFromAddress}>`,
@@ -284,14 +284,14 @@ async function ActiveInactiveEmail(user) {
     <p><strong>Full Name:</strong> ${user.firstName} ${user.lastName}</p>
     <p><strong>Email:</strong> ${user.email}</p>
     ${user.isActive ? `<p><strong>Pass:</strong> zee@12345</p>` : ""}
-    ${user.isActive ? `<p>If showing invalid credential, <br/> just forget your password: <a href="http://139.59.72.240/forget-pass">Click here</a></p>` : ""}
+    ${user.isActive ? `<p>If showing invalid credential, <br/> just forget your password: <a href="http://139.59.85.95/forget-pass">Click here</a></p>` : ""}
     <p><strong>Contact Number:</strong> ${user.contactNumber}</p>
     <p><strong>Status Changed On:</strong> ${actionDate}</p>
   </div>
                     
                     ${user.isActive ? `
                     <p>To access your account, please use the credentials previously provided to you.</p>
-                    <a href="http://139.59.72.240/login" class="button">Login to Portal</a>
+                    <a href="http://139.59.85.95/login" class="button">Login to Portal</a>
                     ` : ''}
                     
                     <p>If you believe this status change was made in error or have any questions, please contact our HR department immediately:</p>
@@ -508,7 +508,7 @@ async function CVTransftermail(application, recipient, assignType) {
               
               <!-- Button to access application -->
               <div style="text-align: center; margin: 25px 0;">
-                <a href="http://139.59.72.240/recruitment/application/review?id=${application._id}" 
+                <a href="http://139.59.85.95/recruitment/application/review?id=${application._id}" 
                    style="display: inline-block; background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: 500;">
                   View Application
                 </a>
@@ -632,7 +632,7 @@ async function getFeedbackMailFromReviwer(creator, manager, application) {
               
               <!-- Button to access application -->
               <div style="text-align: center; margin: 25px 0;">
-                <a href="http://139.59.72.240/recruitment/application?id=${application._id}" 
+                <a href="http://139.59.85.95/recruitment/application?id=${application._id}" 
                    style="display: inline-block; background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: 500;">
                   View Application Details
                 </a>
@@ -752,7 +752,7 @@ async function getFeedbackMailFromManagerForManpower(creator, manager, applicati
               
               <!-- Button to access application -->
               <div style="text-align: center; margin: 25px 0;">
-                <a href="http://139.59.72.240/recruitment/application?id=${application._id}" 
+                <a href="http://139.59.85.95/recruitment/application?id=${application._id}" 
                    style="display: inline-block; background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: 500;">
                   View Application Details
                 </a>
