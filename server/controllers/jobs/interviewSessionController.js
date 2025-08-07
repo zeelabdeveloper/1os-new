@@ -7,6 +7,7 @@ const sendEmail = require("../../services/forgetpassmail");
 const { EmailConfig } = require("../../helper/emailConfig");
 const EmailNotification = require("../../models/setting/emailNotification");
 const User = require("../../models/User");
+const expressAsyncHandler = require("express-async-handler");
 // @desc    Get single interview session
 // @route   GET /api/v1/interview/interviewSessions/:id
 // @access  Private
@@ -32,22 +33,84 @@ exports.getInterviewSession = async (req, res, next) => {
   }
 };
 
+// exports.getInterviewRoundsByInterviewer = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // Validate if userId is a valid ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).json({ message: "Invalid user ID" });
+//     }
+
+//     const interviewRounds = await InterViewRound.find({ interviewer: userId })
+//       .populate("interviewer", "name email")
+//       .sort({ roundNumber: 1 });
+
+//     res.status(200).json({
+//       success: true,
+//       data: interviewRounds,
+//       message:
+//         interviewRounds.length > 0
+//           ? "Interview rounds fetched successfully"
+//           : "No interview rounds found for this user",
+//     });
+//   } catch (error) {
+//     console.error("Error fetching interview rounds:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error while fetching interview rounds",
+//     });
+//   }
+// };
+
+
+
+
+
+ 
 exports.getInterviewRoundsByInterviewer = async (req, res) => {
   try {
     const { userId } = req.params;
+    const { page = 1, limit = 10, startDate, endDate } = req.query;
 
     // Validate if userId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const interviewRounds = await InterViewRound.find({ interviewer: userId })
+    // Build query
+    const query = InterViewRound.find({ interviewer: userId });
+
+    // Add date filter if provided
+    if (startDate && endDate) {
+      query.where({
+        createdAt: {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate)
+        }
+      });
+    }
+
+    // Execute query with pagination
+    const interviewRounds = await query
       .populate("interviewer", "name email")
-      .sort({ roundNumber: 1 });
+      .sort({ roundNumber: 1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
+
+    // Get total count
+    const total = await InterViewRound.countDocuments({ interviewer: userId });
 
     res.status(200).json({
       success: true,
       data: interviewRounds,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        itemsPerPage: parseInt(limit)
+      },
       message:
         interviewRounds.length > 0
           ? "Interview rounds fetched successfully"
@@ -61,6 +124,11 @@ exports.getInterviewRoundsByInterviewer = async (req, res) => {
     });
   }
 };
+
+
+
+
+
 
 exports.getInterviewByInterviewer = async (req, res) => {
   try {
@@ -174,7 +242,7 @@ exports.createInterviewSession = async (req, res, next) => {
         },
       ],
     });
-
+ 
     if (conflictingSession) {
       return res.status(400).json({
         success: false,

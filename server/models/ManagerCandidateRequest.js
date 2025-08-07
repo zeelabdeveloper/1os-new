@@ -9,6 +9,40 @@ const employeeRequestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  firstManager: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+
+
+
+
+ history: [{
+    handler: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    
+    },
+    action: {
+      type: String,
+     
+       
+    },
+    field: String,  
+    oldValue: mongoose.Schema.Types.Mixed,  
+    newValue: mongoose.Schema.Types.Mixed,
+    notes: String,  
+    timestamp: {
+      type: Date,
+      default: Date.now
+    }
+  }]
+
+,
+
+
+
+
   department: {
     type: String,
   },

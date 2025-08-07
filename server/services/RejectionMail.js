@@ -793,4 +793,161 @@ async function getFeedbackMailFromManagerForManpower(creator, manager, applicati
 
 
 
-module.exports = { RejectionMail ,   getFeedbackMailFromManagerForManpower,     ActiveInactiveEmail,CVTransftermail,getFeedbackMailFromReviwer,  OwnSeparationMailEmail, sendConfirmationEmail,   onboardingMail  };
+
+
+
+
+// Email notification for status updates
+async function getStatusUpdateEmail(recipient, actor, request) {
+  try {
+    const allNotification = await EmailNotification.findOne().lean();
+    if (!allNotification?.getFeedbackMailFromManagerForManpower) return;
+
+    const statusMap = {
+      approved: "approved",
+      rejected: "rejected",
+      fulfilled: "fulfilled",
+      pending: "set back to pending"
+    };
+
+    const mailOptions = {
+      from: `${EmailConfig.mailFromName} <${EmailConfig.mailFromAddress}>`,
+      to: recipient.email,
+      subject: `Your Manpower Request Has Been ${statusMap[request.status]} - Zeelab`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 20px;">
+          <div style="max-width: 600px; margin: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background-color: #2c3e50; padding: 20px; color: white; text-align: center;">
+              <h2 style="margin: 0; font-weight: 600;">Request ${statusMap[request.status]}</h2>
+            </div>
+            
+            <div style="padding: 30px;">
+              <h3 style="color: #2c3e50; margin-top: 0;">Dear ${recipient.firstName},</h3>
+              
+              <p style="color: #555; line-height: 1.6;">
+                Your manpower request has been ${statusMap[request.status]} by ${actor.firstName}.
+              </p>
+              
+              <div style="background-color: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin: 20px 0;">
+                <h4 style="margin-top: 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Request Details</h4>
+                <table style="width: 100%; color: #555;">
+                  <tr>
+                    <td style="width: 40%; padding: 5px 0; font-weight: 500;">Department:</td>
+                    <td style="padding: 5px 0;">${request.department}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 5px 0; font-weight: 500;">Position:</td>
+                    <td style="padding: 5px 0;">${request.position}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 5px 0; font-weight: 500;">Status:</td>
+                    <td style="padding: 5px 0; text-transform: capitalize;">${request.status}</td>
+                  </tr>
+                  ${request.adminFeedback ? `
+                  <tr>
+                    <td style="padding: 5px 0; font-weight: 500; vertical-align: top;">Feedback:</td>
+                    <td style="padding: 5px 0;">${request.adminFeedback}</td>
+                  </tr>
+                  ` : ''}
+                </table>
+              </div>
+              
+              <div style="text-align: center; margin: 25px 0;">
+                <a href="http://139.59.85.95/support/need-emp" 
+                   style="display: inline-block; background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: 500;">
+                  View Request Details
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+    };
+
+    await sendEmail(mailOptions);
+    console.log("Status update email sent to:", recipient.email);
+  } catch (error) {
+    console.error("Failed to send status update email:", error);
+  }
+}
+
+
+
+
+
+// Email notification for assignments
+async function getAssignmentEmail(creator, assignee, request) {
+  try {
+    const allNotification = await EmailNotification.findOne().lean();
+    if (!allNotification?.getFeedbackMailFromManagerForManpower) return;
+
+    const mailOptions = {
+      from: `${EmailConfig.mailFromName} <${EmailConfig.mailFromAddress}>`,
+      to: assignee.email,
+      subject: `New Manpower Request Assigned to You - Zeelab`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 20px;">
+          <div style="max-width: 600px; margin: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background-color: #2c3e50; padding: 20px; color: white; text-align: center;">
+              <h2 style="margin: 0; font-weight: 600;">New Request Assignment</h2>
+            </div>
+            
+            <div style="padding: 30px;">
+              <h3 style="color: #2c3e50; margin-top: 0;">Dear ${assignee.firstName},</h3>
+              
+              <p style="color: #555; line-height: 1.6;">
+                You have been assigned a new manpower request by ${creator.firstName} for review.
+              </p>
+              
+              <div style="background-color: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 5px; padding: 15px; margin: 20px 0;">
+                <h4 style="margin-top: 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 8px;">Request Details</h4>
+                <table style="width: 100%; color: #555;">
+                  <tr>
+                    <td style="width: 40%; padding: 5px 0; font-weight: 500;">Department:</td>
+                    <td style="padding: 5px 0;">${request.department}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 5px 0; font-weight: 500;">Position:</td>
+                    <td style="padding: 5px 0;">${request.position}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 5px 0; font-weight: 500;">Urgency:</td>
+                    <td style="padding: 5px 0; text-transform: capitalize;">${request.urgency}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 5px 0; font-weight: 500; vertical-align: top;">Description:</td>
+                    <td style="padding: 5px 0;">${request.jobDescription}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <div style="text-align: center; margin: 25px 0;">
+                <a href="http://139.59.85.95/support/manager-request" 
+                   style="display: inline-block; background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: 500;">
+                  Review Request
+                </a>
+              </div>
+              
+              <p style="color: #777; font-size: 14px; text-align: center;">
+                Please review this request at your earliest convenience.
+              </p>
+            </div>
+          </div>
+        </div>
+      `,
+    };
+
+    await sendEmail(mailOptions);
+    console.log("Assignment email sent to:", assignee.email);
+  } catch (error) {
+    console.error("Failed to send assignment email:", error);
+  }
+}
+
+
+
+
+
+
+
+module.exports = { RejectionMail , getAssignmentEmail,getStatusUpdateEmail,       getFeedbackMailFromManagerForManpower,     ActiveInactiveEmail,CVTransftermail,getFeedbackMailFromReviwer,  OwnSeparationMailEmail, sendConfirmationEmail,   onboardingMail  };

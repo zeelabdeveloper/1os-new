@@ -364,7 +364,7 @@ exports.createUser = async (req, res) => {
 };
 
 exports.checkEmployeeConversion = async (req, res) => {
-  console.log("sfsfd");
+ 
   try {
     const { applicationId } = req.query;
 
@@ -722,101 +722,6 @@ exports.fetchUser = async (req, res) => {
 
 
  
-// exports.getCompanyStats = async (req, res) => {
-//   try {
-//     // Total applications count
-//     const totalApplications = await Application.countDocuments();
-    
-//     // Today's applications count
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0);
-//     const todaysApplications = await Application.countDocuments({
-//       appliedAt: { $gte: today }
-//     });
-    
-//     // Status-wise counts
-//     const statusCounts = await Application.aggregate([
-//       {
-//         $group: {
-//           _id: "$status",
-//           count: { $sum: 1 }
-//         }
-//       }
-//     ]);
-    
-//     // Creator-wise counts with status breakdown
-//     const creatorStats = await Application.aggregate([
-//       {
-//         $lookup: {
-//           from: "users",
-//           localField: "createdBy",
-//           foreignField: "_id",
-//           as: "creator"
-//         }
-//       },
-//       { $unwind: "$creator" },
-//       {
-//         $group: {
-//           _id: {
-//             creatorId: "$createdBy",
-//             creatorName: `$creator.firstName`,
-//             status: "$status"
-//           },
-//           count: { $sum: 1 }
-//         }
-//       },
-//       {
-//         $group: {
-//           _id: {
-//             creatorId: "$_id.creatorId",
-//             creatorName: "$_id.creatorName"
-//           },
-//           total: { $sum: "$count" },
-//           statuses: {
-//             $push: {
-//               status: "$_id.status",
-//               count: "$count"
-//             }
-//           }
-//         }
-//       },
-//       { $sort: { total: -1 } }
-//     ]);
-   
-//     // Monthly application trends
-//     const monthlyTrends = await Application.aggregate([
-//       {
-//         $group: {
-//           _id: {
-//             year: { $year: "$appliedAt" },
-//             month: { $month: "$appliedAt" }
-//           },
-//           count: { $sum: 1 }
-//         }
-//       },
-//       { $sort: { "_id.year": 1, "_id.month": 1 } },
-//       { $limit: 12 }
-//     ]);
-    
-//     res.json({
-//       success: true,
-//       data: {
-//         totalApplications,
-//         todaysApplications,
-//         statusCounts,
-//         creatorStats,
-//         monthlyTrends
-//       }
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Error fetching company stats"
-//     });
-//   }
-// };
-
 
 
 

@@ -142,7 +142,7 @@ const ConvertToEMP = () => {
       <div className="border-t" style={{ margin: "0 auto" }}>
         <Result
           icon={<CheckOutlined style={{ color: "#52c41a" }} />}
-          title="This applicant is already Onboared to an employee!"
+          title="Onboarding Successful!"
           subTitle={`User ID: ${existingEmployee.EmployeeId}`}
           extra={[
             <Button

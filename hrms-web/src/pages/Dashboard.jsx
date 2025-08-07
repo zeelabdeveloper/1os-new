@@ -125,7 +125,7 @@ if(userId){
   return (
     <div className="h-[92vh] overflow-y-auto relative">
       {/* Notification Permission Modal */}
-      {showNotificationModal && (
+      {/* {showNotificationModal && (
         <div className="absolute      inset-0 bg-black/75 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
             <h2 className="text-xl font-bold mb-4">Important Notifications</h2>
@@ -169,7 +169,7 @@ if(userId){
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       <MessageScroller />
       <TrackUserHistory user={user} />

@@ -522,6 +522,7 @@ import axios from "../../axiosConfig";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../../stores/authStore";
 import { useSearchParams } from "react-router-dom";
+import ManagerSupportActivity from "./ManagerSupportActivity";
 
 const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
@@ -574,7 +575,7 @@ const AdminSee = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { mutate: updateRequest } = useMutation({
+  const { mutate: updateRequest , isPending } = useMutation({
     mutationFn: async (values) => {
       const { _id, ...data } = values;
       const response = await axios.patch(
@@ -960,7 +961,24 @@ const AdminSee = () => {
             />
           </Card>
         </TabPane>
+
+
+
+
+  <TabPane tab="Forworded" key="3">
+           
+<ManagerSupportActivity firstManager={user._id}/>
+
+        </TabPane>
+
+
+
+
+
       </Tabs>
+
+
+
 
       {/* Request Details Modal */}
       <Modal
@@ -1084,7 +1102,7 @@ const AdminSee = () => {
           <Button key="back" onClick={() => setIsActionModalVisible(false)}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={handleActionSubmit}>
+          <Button key="submit" type="primary"   loading={isPending} onClick={handleActionSubmit}>
             Submit
           </Button>,
         ]}

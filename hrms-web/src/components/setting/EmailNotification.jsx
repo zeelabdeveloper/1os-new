@@ -212,12 +212,7 @@ const EmailNotificationSettings = () => {
           icon: <FileDoneOutlined />,
           color: "#08979c",
         },
-        {
-          name: "getFeedbackMailFromManagerForManpower",
-          label: "Share a Man Power Request Feedback to Creator Or Handler",
-          icon: <FileDoneOutlined />,
-          color: "#08979c",
-        },
+     
         {
           name: "newApplicationRejection",
           label: "Application Rejection",
@@ -278,7 +273,12 @@ const EmailNotificationSettings = () => {
           icon: <FileDoneOutlined />,
           color: "#08979c",
         },
-        
+           {
+          name: "getFeedbackMailFromManagerForManpower",
+          label: "Share a Man Power Request Feedback to Creator Or Handler",
+          icon: <FileDoneOutlined />,
+          color: "#08979c",
+        },
        
       ],
     },

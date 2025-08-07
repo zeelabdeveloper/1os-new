@@ -97,14 +97,6 @@ const queryClient = new QueryClient({
 
 const App = () => {
   
-
-
-
-
-
-
-
-
   return (
     <Router>
       <QueryClientProvider client={queryClient}>
@@ -119,9 +111,12 @@ const App = () => {
                 </ProtectedRoute>
               }
             >
+
+
               <Route path="/" element={<Dashboard />} />
               <Route path="categories" element={<Categories />} />
               <Route path="profiles" element={<ViewProfile />} />
+
 
               {/* Coco Routes */}
               <Route path="coco/userlist" element={<UserManagementCoco />} />
@@ -132,7 +127,7 @@ const App = () => {
                 element={<AdminRegularizationList />}
               />
               <Route path="coco/store" element={<Store />} />
-
+               
               {/* Account Routes */}
               <Route path="Account/list" element={<BankAccountListPage />} />
 
