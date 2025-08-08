@@ -5,8 +5,7 @@ import TrackUserHistory from "../components/dashboard/TrackUserHistory";
 import InterviewSessionNotifications from "../components/InterviewSessionChecker";
 import TeamsReport from "../components/TeamsReport/TeamsReport";
 import useAuthStore from "../stores/authStore";
-import { Button, notification } from "antd";
-import { FaPhone } from "react-icons/fa";
+ 
 import { useSearchParams } from "react-router-dom";
 
 function Dashboard() {
@@ -22,41 +21,39 @@ if(userId){
 
 
 
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [isNotificationAllowed, setIsNotificationAllowed] = useState(
-    Notification?.permission === "granted"
-  );
+  // const [showNotificationModal, setShowNotificationModal] = useState(false);
+  // const [isNotificationAllowed, setIsNotificationAllowed] = useState(
+  //   Notification?.permission === "granted"
+  // );
 
-  function urlBase64ToUint8Array(base64String) {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
+  // function urlBase64ToUint8Array(base64String) {
+  //   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  //   const base64 = (base64String + padding)
+  //     .replace(/-/g, "+")
+  //     .replace(/_/g, "/");
 
-    const raw = atob(base64);
-    const output = new Uint8Array(raw.length);
+  //   const raw = atob(base64);
+  //   const output = new Uint8Array(raw.length);
 
-    for (let i = 0; i < raw.length; ++i) {
-      output[i] = raw.charCodeAt(i);
-    }
-    return output;
-  }
+  //   for (let i = 0; i < raw.length; ++i) {
+  //     output[i] = raw.charCodeAt(i);
+  //   }
+  //   return output;
+  // }
 
-  const checkNotificationPermission = async () => {
-    if (!("Notification" in window)) {
-      console.log("This browser does not support notifications.");
-      return;
-    }
+  // const checkNotificationPermission = async () => {
+  //   if (!("Notification" in window)) {
+  //     console.log("This browser does not support notifications.");
+  //     return;
+  //   }
  
-    const permission = await Notification.requestPermission();
-    setIsNotificationAllowed(permission === "granted");
+  //   const permission = await Notification.requestPermission();
+  //   setIsNotificationAllowed(permission === "granted");
 
-    if (permission !== "granted") {
-      setShowNotificationModal(true);
-    }
-  };
-
-
+  //   if (permission !== "granted") {
+  //     setShowNotificationModal(true);
+  //   }
+  // };
 
 
 
@@ -64,63 +61,65 @@ if(userId){
 
 
 
- const subscribe = async () => {
-      if ("serviceWorker" in navigator && "PushManager" in window) {
-        try {
-          const permission = await Notification.permission;
-          if (permission === "denied") {
-            setShowNotificationModal(true);
-            return;
-          }
-
-          const registration = await navigator.serviceWorker.register("/service-worker.js");
-          const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(
-              import.meta.env.VITE_publicKeyForRealWebNotify
-            ),
-          });
-
-          await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/subscribe`, {
-            method: "POST",
-            body: JSON.stringify({ subscription, userId: user._id }),
-            headers: { "Content-Type": "application/json" },
-          });
-        } catch (err) {
-          console.error("Subscription failed:", err);
-          notification.error({
-            message: "Failed to subscribe to notifications!",
-          });
-        }
-      } else {
-        notification.error({
-          message: "Browser doesn't support notifications!",
-        });
-      }
-    };
 
 
-  useEffect(() => {
+//  const subscribe = async () => {
+//       if ("serviceWorker" in navigator && "PushManager" in window) {
+//         try {
+//           const permission = await Notification.permission;
+//           if (permission === "denied") {
+//             setShowNotificationModal(true);
+//             return;
+//           }
+
+//           const registration = await navigator.serviceWorker.register("/service-worker.js");
+//           const subscription = await registration.pushManager.subscribe({
+//             userVisibleOnly: true,
+//             applicationServerKey: urlBase64ToUint8Array(
+//               import.meta.env.VITE_publicKeyForRealWebNotify
+//             ),
+//           });
+
+//           await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/subscribe`, {
+//             method: "POST",
+//             body: JSON.stringify({ subscription, userId: user._id }),
+//             headers: { "Content-Type": "application/json" },
+//           });
+//         } catch (err) {
+//           console.error("Subscription failed:", err);
+//           notification.error({
+//             message: "Failed to subscribe to notifications!",
+//           });
+//         }
+//       } else {
+//         notification.error({
+//           message: "Browser doesn't support notifications!",
+//         });
+//       }
+//     };
+
+
+  // useEffect(() => {
    
 
-    if (user?._id) {
-      checkNotificationPermission();
-      subscribe();
-    }
-  }, [user?._id]);
+  //   if (user?._id) {
+  //     checkNotificationPermission();
+  //     subscribe();
+  //   }
+  // }, [user?._id]);
 
-  const handleEnableNotifications = async () => {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      setIsNotificationAllowed(true);
-      setShowNotificationModal(false);
-      // Resubscribe after enabling
-      if (user?._id) {
+  // const handleEnableNotifications = async () => {
+  //   const permission = await Notification.requestPermission();
+  //   if (permission === "granted") {
+  //     setIsNotificationAllowed(true);
+  //     setShowNotificationModal(false);
+  //     // Resubscribe after enabling
+  //     if (user?._id) {
         
-        subscribe();
-      }
-    }
-  };
+  //       subscribe();
+  //     }
+  //   }
+  // };
 
   return (
     <div className="h-[92vh] overflow-y-auto relative">
