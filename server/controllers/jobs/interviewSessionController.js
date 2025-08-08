@@ -8,6 +8,8 @@ const { EmailConfig } = require("../../helper/emailConfig");
 const EmailNotification = require("../../models/setting/emailNotification");
 const User = require("../../models/User");
 const expressAsyncHandler = require("express-async-handler");
+const { createNotification, sendPushNotification } = require("../../helper/l1");
+const Subscription = require("../../models/Subscription");
 // @desc    Get single interview session
 // @route   GET /api/v1/interview/interviewSessions/:id
 // @access  Private
@@ -63,11 +65,6 @@ exports.getInterviewSession = async (req, res, next) => {
 //   }
 // };
 
-
-
-
-
- 
 exports.getInterviewRoundsByInterviewer = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -86,8 +83,8 @@ exports.getInterviewRoundsByInterviewer = async (req, res) => {
       query.where({
         createdAt: {
           $gte: new Date(startDate),
-          $lte: new Date(endDate)
-        }
+          $lte: new Date(endDate),
+        },
       });
     }
 
@@ -109,7 +106,7 @@ exports.getInterviewRoundsByInterviewer = async (req, res) => {
         currentPage: parseInt(page),
         totalPages: Math.ceil(total / limit),
         totalItems: total,
-        itemsPerPage: parseInt(limit)
+        itemsPerPage: parseInt(limit),
       },
       message:
         interviewRounds.length > 0
@@ -125,39 +122,130 @@ exports.getInterviewRoundsByInterviewer = async (req, res) => {
   }
 };
 
+// exports.getInterviewByInterviewer = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
 
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).json({ message: "Invalid user ID" });
+//     }
 
+//     const interviewSessions = await InterviewSession.find({
+//       interviewer: userId,
+//     })
+//       .populate("interviewRoundId")
+//       .populate("applicationId")
+//       .sort({ "interviewRoundId.roundNumber": 1 })
+//       .sort({
+//         createdAt: -1,
+//       });
 
-
+//     res.status(200).json({
+//       success: true,
+//       data: interviewSessions,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching interview assigned:", error);
+//     res.status(500).json({
+//       success: false,
+//       message:
+//         error.message || "Server error while fetching interview assigned",
+//     });
+//   }
+// };
 
 exports.getInterviewByInterviewer = async (req, res) => {
   try {
     const { userId } = req.params;
+    const {
+      page = 1,
+      limit = 1,
+      startDate,
+      endDate,
+      search = "",
+      ["status[]"]: status,
+      "outcome[]": outcome,
+    } = req.query;
 
+    // Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const interviewSessions = await InterviewSession.find({
-      interviewer: userId,
-    })
+    // Build query object
+    const queryObj = { interviewer: new mongoose.Types.ObjectId(userId) };
+
+    // Filter by date range
+    if (startDate && endDate) {
+      queryObj.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    // Filter by status
+    if (status) {
+      queryObj.status = status;
+    }
+
+    // Filter by outcome
+    if (outcome) {
+      queryObj.outcome = outcome;
+    }
+
+    if (search) {
+      // Step 1: Get distinct users who have created applications
+      const applicantIds = await Application.distinct("createdBy");
+
+      // Step 2: Search only among these applicants
+      const matchingApplicants = await User.find({
+        _id: { $in: applicantIds },
+        $or: [
+          { firstName: { $regex: search, $options: "i" } },
+          { lastName: { $regex: search, $options: "i" } },
+        ],
+      }).select("_id");
+
+      // Step 3: Get applications by these matched applicants
+      const applications = await Application.find({
+        createdBy: { $in: matchingApplicants.map((u) => u._id) },
+      }).select("_id");
+
+      queryObj.applicationId = { $in: applications.map((a) => a._id) };
+    }
+
+    // Fetch data with pagination
+    const interviewSessions = await InterviewSession.find(queryObj)
       .populate("interviewRoundId")
       .populate("applicationId")
-      .sort({ "interviewRoundId.roundNumber": 1 })
-      .sort({
-        createdAt: -1,
-      });
+      .sort({ "interviewRoundId.roundNumber": 1, createdAt: -1 })
+      .skip((page - 1) * parseInt(limit))
+      .limit(parseInt(limit))
+      .exec();
+
+    // Get total count
+    const total = await InterviewSession.countDocuments(queryObj);
 
     res.status(200).json({
       success: true,
       data: interviewSessions,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        itemsPerPage: parseInt(limit),
+      },
+      message:
+        interviewSessions.length > 0
+          ? "Interview sessions fetched successfully"
+          : "No interview sessions found for this interviewer",
     });
   } catch (error) {
-    console.error("Error fetching interview assigned:", error);
+    console.error("Error fetching interview sessions:", error);
     res.status(500).json({
       success: false,
       message:
-        error.message || "Server error while fetching interview assigned",
+        error.message || "Server error while fetching interview sessions",
     });
   }
 };
@@ -195,7 +283,7 @@ exports.createInterviewSession = async (req, res, next) => {
     const [startTime, endTime] = timeRange;
     console.log(startTime, endTime);
     // Check if application exists
-    const application = await Application.findById(applicationId);
+    const application = await Application.findById(applicationId).populate('createdBy')
     if (!application) {
       return res.status(404).json({
         success: false,
@@ -242,7 +330,7 @@ exports.createInterviewSession = async (req, res, next) => {
         },
       ],
     });
- 
+
     if (conflictingSession) {
       return res.status(400).json({
         success: false,
@@ -369,6 +457,48 @@ exports.createInterviewSession = async (req, res, next) => {
 
     await sendEmail(mailOptions);
 
+
+
+
+
+
+
+        await createNotification({
+          receiver: interviewerDetails?._id,
+          sender: application?.createdBy?._id,
+          title: `New Interview assign`,
+          message: `${
+            application?.createdBy?.firstName || "Someone"
+          } assign a new interview`,
+          type: "alert",
+          link: ``,
+        });
+
+
+
+const subscribe = await Subscription.findOne({ userId:interviewerDetails?._id });
+if (subscribe) {
+  await sendPushNotification(
+    JSON.stringify({
+               title: `New Interview assign`,
+      body:`${
+            application?.createdBy?.firstName || "Someone"
+          } assign a new interview`,
+      url:``,
+    }),
+    subscribe
+  );
+}
+
+
+
+
+
+
+
+
+
+
     res.status(201).json({
       success: true,
       message: "Interview created",
@@ -439,9 +569,17 @@ exports.updateInterviewSession = async (req, res, next) => {
 exports.updateInterviewSessionStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status, notes, feedback, recordingLink, isOutCome } = req.body;
+    const { status, isOutCome } = req.body;
 
-    const session = await InterviewSession.findById(id);
+    const session = await InterviewSession.findById(id)
+      .populate({
+        path: "applicationId",
+        populate: {
+          path: "createdBy",
+        },
+      })
+      .populate("interviewer");
+    console.log(session);
     if (!session) {
       return res.status(404).json({
         success: false,
@@ -449,19 +587,44 @@ exports.updateInterviewSessionStatus = async (req, res, next) => {
       });
     }
 
-    if (feedback || recordingLink) {
-      await InterviewSession.findByIdAndUpdate(id, req.body);
-      return res.status(201).json({
-        success: true,
-        message: "Thanks For Your Feedback.",
-      });
-    }
     console.log(req.body);
-    console.log(req.params.id);
+
     // Outcome update has priority if isOutCome is true
     if (isOutCome) {
       if (req?.body?.status?.ratings) {
         await InterviewSession.findByIdAndUpdate(id, req.body.status);
+
+        await createNotification({
+          receiver: session?.applicationId?.createdBy?._id,
+          sender: session?.interviewer?._id,
+          title: `Feedback Received From ${session?.interviewer?.firstName || "Someone" }`,
+          message: `${
+            session?.interviewer?.firstName || "Someone"
+          } has provided feedback on application`,
+          type: "alert",
+          link: `recruitment/application?id=${session?.applicationId?._id}`,
+        });
+
+
+
+const subscribe = await Subscription.findOne({ userId: session?.applicationId?.createdBy?._id });
+if (subscribe) {
+  await sendPushNotification(
+    JSON.stringify({
+        title: `Feedback Received From ${session?.interviewer?.firstName || "Someone" }`,
+      body:  `${
+            session?.interviewer?.firstName || "Someone"
+          } has provided feedback on application`,
+      url: `recruitment/application?id=${session?.applicationId?._id}`
+    }),
+    subscribe
+  );
+}
+
+
+
+
+
         return res.status(200).json({
           success: true,
           message: "Feedback Updated!",
@@ -483,6 +646,35 @@ exports.updateInterviewSessionStatus = async (req, res, next) => {
     }
 
     await session.save();
+
+        await createNotification({
+          receiver: session?.applicationId?.createdBy?._id,
+          sender: session?.interviewer?._id,
+          title: `Feedback Received From ${session?.interviewer?.firstName || "Someone" }`,
+          message: `${
+            session?.interviewer?.firstName || "Someone"
+          } has provided feedback on application`,
+          type: "alert",
+          link: `recruitment/application?id=${session?.applicationId?._id}`,
+        });
+
+
+
+const subscribe = await Subscription.findOne({ userId: session?.applicationId?.createdBy?._id });
+if (subscribe) {
+  await sendPushNotification(
+    JSON.stringify({
+        title: `Feedback Received From ${session?.interviewer?.firstName || "Someone" }`,
+      body:  `${
+            session?.interviewer?.firstName || "Someone"
+          } has provided feedback on application`,
+      url: `recruitment/application?id=${session?.applicationId?._id}`
+    }),
+    subscribe
+  );
+}
+
+
 
     return res.status(200).json({
       success: true,
@@ -687,7 +879,7 @@ exports.getInterviewSessions = async (req, res) => {
           select: "name position email ",
           populate: {
             path: "jobId",
-            select: "title",  
+            select: "title",
           },
         },
         { path: "interviewer", select: "firstName" },

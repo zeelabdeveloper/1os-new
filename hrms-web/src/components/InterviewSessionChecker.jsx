@@ -668,8 +668,8 @@
 
 
 
-
-import { useState, useCallback, useMemo } from "react";
+import _ from 'lodash';
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   Card,
   Tag,
@@ -748,6 +748,7 @@ const SKILLS_LIST = [
 ];
 
 const fetchInterviewerSessions = async (interviewerId, page = 1, pageSize = 10, filters = {}) => {
+  console.log(filters)
   const params = {
     page,
     limit: pageSize,
@@ -788,13 +789,34 @@ const InterviewSessionManager = ({ user }) => {
     pageSize: 10,
     total: 0,
   });
+const [searchInputValue, setSearchInputValue] = useState(""); // Separate state for the input 
+
+
+const debouncedSearch = useMemo(
+  () => _.debounce((value) => setSearchText(value), 500),
+  []
+);
+
+// Update the immediate input value and trigger debounced search
+const handleSearchChange = (e) => {
+  const value = e.target.value;
+  setSearchInputValue(value); // Update immediately for responsive input
+  debouncedSearch(value); // Debounce the actual filter update
+};
+
+// Clean up the debounce on unmount
+useEffect(() => {
+  return () => {
+    debouncedSearch.cancel();
+  };
+}, [debouncedSearch]);
 
   // State for filters
   const [statusFilter, setStatusFilter] = useState([]);
   const [outcomeFilter, setOutcomeFilter] = useState([]);
   const [dateRange, setDateRange] = useState([]);
   const [searchText, setSearchText] = useState("");
-
+console.log(statusFilter)
   const {
     data: sessionsData = {},
     refetch,
@@ -818,6 +840,9 @@ const InterviewSessionManager = ({ user }) => {
     staleTime: 1000 * 60 * 5,
     keepPreviousData: true,
   });
+
+
+ 
 
   const statusMutation = useMutation({
     mutationFn: updateInterviewStatus,
@@ -922,7 +947,11 @@ const InterviewSessionManager = ({ user }) => {
     );
   };
 
-  if ((sessionsData.data?.length === 0 || !sessionsData.data) && !isLoading) return null;
+  if ( searchText==""  && statusFilter.length===0 &&
+    
+    outcomeFilter.length===0 &&
+    dateRange?.length===0  
+    && (sessionsData.data?.length === 0 || !sessionsData.data) && !isLoading) return null;
 
   return (
     <div className="p-4">
@@ -958,8 +987,8 @@ const InterviewSessionManager = ({ user }) => {
             <Input
               placeholder="Search candidate or round"
               allowClear
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+  value={searchInputValue} // Use the immediate value state
+  onChange={handleSearchChange} // Use the new handler
               disabled={isFetching}
             />
           </Col>
@@ -1349,15 +1378,15 @@ const InterviewSessionManager = ({ user }) => {
               )}
             />
             <div className="flex justify-center mt-4">
-              <Pagination
-                current={pagination.current}
-                pageSize={pagination.pageSize}
-                total={sessionsData.pagination?.total || 0}
-                onChange={handlePaginationChange}
-                showSizeChanger
-                showQuickJumper
-                disabled={isFetching}
-              />
+          <Pagination
+  current={sessionsData?.pagination?.currentPage || pagination.current}
+  pageSize={sessionsData?.pagination?.itemsPerPage || pagination.pageSize}
+  total={sessionsData?.pagination?.totalItems || 0}
+  onChange={handlePaginationChange}
+  showSizeChanger
+  showQuickJumper
+  disabled={isFetching}
+/>
             </div>
           </>
         )}
@@ -1367,19 +1396,3 @@ const InterviewSessionManager = ({ user }) => {
 };
 
 export default InterviewSessionManager;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
